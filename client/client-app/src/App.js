@@ -12,7 +12,7 @@ function App() {
   const [data, setData] = useState();
 
   useEffect(() => {
-    fetch(`http://178.154.240.169:5000/get_recommendations_mock/${userId}`)
+    fetch(`http://178.154.240.169:5000/get_recommendations/${userId}`)
     .then(res => res.json())
     .then(res => setData(res))
   }, [id]);
