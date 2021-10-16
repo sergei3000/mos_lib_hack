@@ -92,19 +92,20 @@ function App() {
         <Col> 
           <Row>
             <Navbar bg="light" expand="lg">
-              <Navbar.Brand href="#">Введите id пользователя</Navbar.Brand>
-              <Form className="d-flex" onChange={handleChange} onSubmit={(event) => handleSubmit(event, userId)}>
-                <FormControl
-                  type="search"
-                  placeholder="user_id"
-                  className="mr-2"
-                  aria-label="Search"
-                />
-                <Button variant="outline-success" type="submit"> Search </Button>
-              </Form>
+                <Navbar.Brand href="#">Введите id пользователя</Navbar.Brand>
+                <Form className="d-flex" onChange={handleChange} onSubmit={(event) => handleSubmit(event, userId)}>
+                  <FormControl
+                    type="search"
+                    placeholder="user_id"
+                    className="mr-2"
+                    aria-label="Search"
+                  />
+                  <Button variant="outline-success" type="submit"> Search </Button>
+                </Form>
             </Navbar>
             {/* {JSON.stringify(data)}  */}
           </Row>
+          <Row> <h4>user_id={id}</h4> </Row>
           <Row>
             <Col>
               <h1> Рекомендации </h1>
