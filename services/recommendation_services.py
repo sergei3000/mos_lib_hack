@@ -19,7 +19,7 @@ async def get_history(user_id: int, connection_pool):
     query_output = await db_services.execute_query(
         sql_query_string, sql_query_params, connection_pool, fetch="all"
     )
-    result = [{"id": row[0], "title": row[1], "author": row[2], "rank": row[3]}
+    result = [{"id": row[0], "title": row[1], "author": row[2]}
         for row in query_output]
 
     return result
