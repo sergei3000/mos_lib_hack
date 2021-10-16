@@ -8,27 +8,27 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api import recommendations_api
 
-MIN_DB_CONN_POOL_SIZE = 5
+DB_NAME = "mos_lib_hack"
 
-logger = logging.getLogger("main.py")
+logging.getLogger().setLevel(logging.INFO)
 
 app = FastAPI()
 
 
-# @app.on_event("startup")
-# async def _startup():
-#     try:
-#         db = "mos_lib_hack"
-#         usr = "root"
-#         # pwd = "password"
-#         hst = "localhost"
-#         prt = 3306
-#         app.state.pool = await aiomysql.create_pool(host=hst, port=prt, user=usr, db=db)
-#         logger.info(f"Connected to Mysql")
+@app.on_event("startup")
+async def _startup():
+    try:
+        db = DB_NAME
+        usr = "root"
+        # pwd = "password"
+        hst = "localhost"
+        prt = 3306
+        app.state.pool = await aiomysql.create_pool(host=hst, port=prt, user=usr, db=db, minsize=5)
+        logging.info(f"Connected to Mysql")
 
-#     except ConnectionRefusedError as e:
-#         logger.info(f"cannot connect to MySQL")
-#         return
+    except:
+        logging.info(f"cannot connect to MySQL")
+        return
 
 
 def configure():

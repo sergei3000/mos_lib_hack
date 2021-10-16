@@ -6,14 +6,12 @@ from services import recommendation_services
 router = fastapi.APIRouter()
 
 
-@router.get("/get_recommendations/{item_id}")
-async def get_test_item(item_id: int, req: Request):
-    db_row = await recommendation_services.get_item(item_id, req.app.extra["postgres"])
+@router.get("/get_recommendations/{user_id}")
+async def get_test_item(user_id: int, req: Request):
+    recommendations = await recommendation_services.get_recommendations(user_id, req.app.state.pool)
+    history = await recommendation_services.get_history(user_id, req.app.state.pool)
 
-    if db_row:
-        response = {"key": db_row[0], "value": db_row[1]}
-    else:
-        response = {"key": item_id, "value": None}
+    response = {"recommendations": recommendations, "history": history}
 
     return response
 
