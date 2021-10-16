@@ -130,3 +130,6 @@ dmypy.json
 
 # project's data
 data/*
+
+# different temporary files
+tmp.py
