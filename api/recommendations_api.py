@@ -110,7 +110,7 @@ async def get_test_item(user_id: int, req: Request):
                         {"id": 9,
                         "title": "Красная шапочка",
                         "author": "Перро",
-                        "rank": 99},
+                        "rank": 1},
                         {"id": 101112,
                         "title": "Сказки",
                         "author": "народ",
