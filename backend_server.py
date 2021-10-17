@@ -23,7 +23,7 @@ async def _startup():
         # pwd = "password"
         hst = "localhost"
         prt = 3306
-        app.state.pool = await aiomysql.create_pool(host=hst, port=prt, user=usr, db=db, minsize=5)
+        app.state.pool = await aiomysql.create_pool(host=hst, port=prt, user=usr, db=db, minsize=2)
         logging.info(f"Connected to Mysql")
 
     except:
