@@ -25,6 +25,7 @@ async def execute_query(
                 result = await cur.fetchall()
             else:
                 result = "success"
+        await conn.commit()
 
     return result
 
