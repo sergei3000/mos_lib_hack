@@ -1,8 +1,11 @@
 import csv
 import logging
-from typing import List, Tuple
+from itertools import chain
+from typing import List, Tuple, Any
 
 import mysql.connector
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -118,3 +121,46 @@ def insert_data_from_csv(cnx: mysql.connector.connection.MySQLConnection,
     cnx.commit()
     mycursor.close()
     logging.info("Inserting data done.")
+
+
+def iter_parquet(file_path: str, columns = None, batch_size=50000) -> Tuple[Any]:
+    """Get data from large parquet files in batches.
+
+    Args:
+        file_path (str): [description]
+        columns ([type], optional): [description]. Defaults to None.
+        batch_size (int, optional): [description]. Defaults to 3.
+
+    Returns:
+        Tuple[Any]: [description]
+
+    Yields:
+        Iterator[Tuple[Any]]: [description]
+    
+    Usage examples
+    ______________
+    1.
+    >>> parquet_reader = iter_parquet("data/backend_test_data/recoms")
+    >>> next_batch = next(parquet_reader)
+    2.
+    >>> parquet_reader = iter_parquet("data/backend_test_data/recoms")
+    >>> for i, j in enumerate(parquet_reader):
+    >>>     print("batch", i + 1)
+    >>>     print(j)
+    """
+
+    # # create file system for file interface objects from S3
+    # fs = s3fs.S3FileSystem()
+
+    # open a file interface object
+    # with fs.open(s3_uri) as fp:
+    with open(file_path, "rb") as fp:
+
+        # convert the python file object into a ParquetFile object for iterating
+        parquet_file = pq.ParquetFile(fp)
+
+        # an iterator of pyarrow.RecordBatch
+        record_batches = parquet_file.iter_batches(batch_size=batch_size, columns=columns)
+
+        # convert from columnar format of pyarrow arrays to a row format of python objects (yields tuples)
+        yield from chain.from_iterable(zip(*map(lambda col: col.to_pylist(), batch.columns)) for batch in record_batches)
