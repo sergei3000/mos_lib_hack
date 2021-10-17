@@ -162,5 +162,9 @@ def iter_parquet(file_path: str, columns = None, batch_size=50000) -> Tuple[Any]
         # an iterator of pyarrow.RecordBatch
         record_batches = parquet_file.iter_batches(batch_size=batch_size, columns=columns)
 
+        # convert from columnar format of pyarrow arrays to a row format of python objects (yields list of tuples)
+        yield from ([*zip(*map(lambda col: col.to_pylist(), batch.columns))] for batch in record_batches)
+
+        # this is another way of yielding - row by row
         # convert from columnar format of pyarrow arrays to a row format of python objects (yields tuples)
-        yield from chain.from_iterable(zip(*map(lambda col: col.to_pylist(), batch.columns)) for batch in record_batches)
+        # yield from itertools.chain.from_iterable(zip(*map(lambda col: col.to_pylist(), batch.columns)) for batch in record_batches)
