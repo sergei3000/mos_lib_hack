@@ -77,7 +77,8 @@ def generate_recommendations_file(
     iid2recid = load_mapping("../../data/iid2recid")
     idx2user = load_mapping("../../data/idx2user")
     idx2item = load_mapping("../../data/idx2item")
-    cat = pd.read_parquet("../../data/cat.parquet.gzip", columns=["recId", "title", "aut"])
+    books_full = pd.read_parquet("../../data/books_full.parquet.gzip", columns=["recId", "title", "author"])
+
     all_recs_df = pd.DataFrame(
         all_recs, columns=["item1", "item2", "item3", "item4", "item5"]
     )
@@ -97,7 +98,7 @@ def generate_recommendations_file(
     all_recs_df["item_id"] = all_recs_df["item_idx"].map(idx2item)
     all_recs_df = all_recs_df.drop("item_idx", axis=1)
     all_recs_df = prepare_for_saving(
-        all_recs_df, is_recs=True, cat=cat, itemid2recid=iid2recid
+        all_recs_df, is_recs=True, books_full=books_full, itemid2recid=iid2recid
     )
     all_recs_df = all_recs_df.sort_values(["user_id", "ranking"])
     all_recs_df.to_csv("../../data/recommendations.csv", index=False)
@@ -105,11 +106,11 @@ def generate_recommendations_file(
 
 def generate_history_file(interactions: pd.DataFrame):
     iid2recid = load_mapping("../../data/iid2recid")
-    cat = pd.read_parquet("../../data/cat.parquet.gzip", columns=["recId", "title", "aut"])
+    books_full = pd.read_parquet("../../data/books_full.parquet.gzip", columns=["recId", "title", "author"])
     history = interactions.copy()
     history = history.sort_values(["user_id", "dt"], ascending=[True, False])
     history = history[history.groupby("user_id").cumcount() < 20]
     history = prepare_for_saving(
-        history, is_recs=False, cat=cat, itemid2recid=iid2recid
+        history, is_recs=False, books_full=books_full, itemid2recid=iid2recid
     )
     history.to_csv("../../data/history.csv", index=False)

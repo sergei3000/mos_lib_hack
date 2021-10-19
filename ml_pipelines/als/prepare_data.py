@@ -3,35 +3,19 @@ import pandas as pd
 from utils import load_mapping, save_mapping
 
 
-def prepare_cat_file():
-    cat = []
-    for i in range(1, 4):
-        cat.append(
-            pd.read_csv(f"../../data/raw/cat_{i}.csv", encoding="cp1251", delimiter=";")
-        )
-    cat = pd.concat(cat).reset_index(drop=True)
-    cat.to_parquet(
-        path="../../data/cat.parquet.gzip",
-        engine="fastparquet",
-        compression="gzip",
-        index=False,
-    )
-
-
 def prepare_mappings_for_recid():
-    cat = pd.read_parquet("../../data/cat.parquet.gzip")
-    cat["aut"] = cat["aut"].fillna("aut_unknown")
-    cat["title"] = cat["title"].fillna("title_unknown")
-    cat["item_id"] = (
-        (cat["aut"].str.lower() + " " + cat["title"].str.lower())
+    books_full = pd.read_parquet("../data/books_full.parquet.gzip")
+    books_full["item_id"] = (
+        (books_full["author"].str.lower() + " " + books_full["title"].str.lower())
         .astype("category")
-        .cat.codes
+        .cat
+        .codes
     )
-    recid2iid = dict(zip(cat["recId"], cat["item_id"]))
-    iid2recid = dict(zip(cat["item_id"], cat["recId"]))
+    recid2iid = dict(zip(books_full["recId"], books_full["item_id"]))
+    iid2recid = dict(zip(books_full["item_id"], books_full["recId"]))
 
-    save_mapping(recid2iid, "../../data/recid2iid")
-    save_mapping(iid2recid, "../../data/iid2recid")
+    save_mapping(recid2iid, "data/recid2iid")
+    save_mapping(iid2recid, "data/iid2recid")
 
 
 def prepare_circulatons_file():
@@ -46,11 +30,11 @@ def prepare_circulatons_file():
 
     circulatons = pd.concat(circulatons).reset_index(drop=True)
 
-    cat = pd.read_parquet("../../data/cat.parquet.gzip")
+    books_full = pd.read_parquet("../../data/books_full.parquet.gzip", columns=["recId", "title", "author"])
     recid2iid = load_mapping("../../data/recid2iid")
     unknown_recid = list(
-        set(circulatons["catalogueRecordID"]) - set(cat["recId"])
-    )  # 466 штук
+        set(circulatons["catalogueRecordID"]) - set(books_full["recId"])
+    )
     circulatons = circulatons[~circulatons["catalogueRecordID"].isin(unknown_recid)]
     circulatons["item_id"] = circulatons["catalogueRecordID"].map(recid2iid)
     circulatons = circulatons.rename(columns={"readerID": "user_id", "startDate": "dt"})
@@ -73,15 +57,11 @@ def prepare_circulatons_file():
 
 
 def prepare_dataset_knigi_file():
-    dataset_knigi = pd.read_excel("../../data/dataset_knigi_1.xlsx")
+    dataset_knigi = pd.read_excel("../../data/raw/dataset_knigi_1.xlsx")
     recid2iid = load_mapping("../../data/recid2iid")
 
     dataset_knigi["recId"] = (
         dataset_knigi["source_url"].apply(lambda x: x.split("/")[-2]).astype(int)
-    )
-    # recId = 732103 (Беседы о русском лесе) нет в cat_.csv и circulatons, но есть в dataset_knigi_1
-    dataset_knigi = dataset_knigi[dataset_knigi["recId"] != 732103].reset_index(
-        drop=True
     )
     dataset_knigi["item_id"] = dataset_knigi["recId"].map(recid2iid)
     dataset_knigi = dataset_knigi.drop(["source_url", "recId", "event"], axis=1)

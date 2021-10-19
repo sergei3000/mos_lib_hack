@@ -1,5 +1,4 @@
 from prepare_data import (
-    prepare_cat_file,
     prepare_mappings_for_recid,
     prepare_circulatons_file,
     prepare_dataset_knigi_file,
@@ -19,7 +18,6 @@ DATASET_KNIGI_FILE = "../../data/dataset_knigi.csv"
 
 
 def main():
-    prepare_cat_file()
     prepare_mappings_for_recid()
     prepare_circulatons_file()
     prepare_dataset_knigi_file()

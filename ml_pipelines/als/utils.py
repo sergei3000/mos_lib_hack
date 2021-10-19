@@ -49,7 +49,7 @@ def generate_implicit_recs_mapper(
     return _recs_mapper
 
 
-def get_title_and_aut(data: pd.DataFrame, cat: pd.DataFrame, itemid2recid: dict):
+def get_title_and_author(data: pd.DataFrame, books_full: pd.DataFrame, itemid2recid: dict):
     """Get author annd title for item_id.
 
     Args:
@@ -62,7 +62,7 @@ def get_title_and_aut(data: pd.DataFrame, cat: pd.DataFrame, itemid2recid: dict)
     """
     data_copy = data.copy()
     data_copy["recId"] = data_copy["item_id"].map(itemid2recid)
-    data_copy = data_copy.merge(cat[["recId", "title", "aut"]], on="recId")
+    data_copy = data_copy.merge(books_full[["recId", "title", "author"]], on="recId")
     data_copy = data_copy.drop("item_id", axis=1)
     data_copy["user_id"] = data_copy["user_id"].astype(int)
     data_copy["recId"] = data_copy["recId"].astype(int)
@@ -70,18 +70,18 @@ def get_title_and_aut(data: pd.DataFrame, cat: pd.DataFrame, itemid2recid: dict)
 
 
 def prepare_for_saving(
-    data: pd.DataFrame, is_recs: bool, cat: pd.DataFrame, itemid2recid: dict
+    data: pd.DataFrame, is_recs: bool, books_full: pd.DataFrame, itemid2recid: dict
 ):
-    data = get_title_and_aut(data, cat, itemid2recid=itemid2recid)
+    data = get_title_and_author(data, books_full, itemid2recid=itemid2recid)
     cols = (
-        ["user_id", "recId", "title", "aut", "ranking"]
+        ["user_id", "recId", "title", "author", "ranking"]
         if is_recs
-        else ["user_id", "recId", "title", "aut"]
+        else ["user_id", "recId", "title", "author"]
     )
     data = data[cols]
     data["title"] = data["title"].str[:100]
-    data["aut"] = data["aut"].str[:100]
-    data = data.rename(columns={"recId": "item_id", "aut": "author"})
+    data["author"] = data["author"].str[:100]
+    data = data.rename(columns={"recId": "item_id"})
     data = (
         data.replace(",", "", regex=True)
         .replace(r"\n", " ", regex=True)
