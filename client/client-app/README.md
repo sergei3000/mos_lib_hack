@@ -1,76 +1,39 @@
-# Запускать так
+# Frontend
 
-`docker build -t client-app .`
+Приложение создано для показа рекомендаций и истории пользователей библиотек.
 
-`docker run -p 80:80 client-app`
+## Интерфейс
 
-# Getting Started with Create React App
+Интерфейс содержит одну страницу, на которой можно вбить id пользователя библиотеки и получить список рекомендуемых книг и историю.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Логика работы
 
-## Available Scripts
+1. Приложение получает id пользователя библиотеки либо из url-a при открытии страницы `host/users/<user_id>`, либо из формы на странице.
+2. Делается запрос к бэкенду для получения рекомендаций и истории по id.
+3. Полученные данные отображаются на странице.
 
-In the project directory, you can run:
+## Технологии
 
-### `npm start`
+- Для запуска фронтенда используется Docker.
+Docker позволяет быстро развертывать и масштабировать приложения в любой среде и сохранять уверенность в том, что код будет работать.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Приложение написано на React.
+React - JavaScript-библиотека для создания пользовательских интерфейсов. React предоставляет высокую скорость, простоту и масштабируемость.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- В качестве веб-сервера используется Nginx.
+Nginx позволяет обрабатывать сотни тысяч единовременных подключений на одном физическом сервере.
 
-### `npm test`
+## Запуск приложения
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Для запуска приложения нужно выполнить следующие две команды:
 
-### `npm run build`
+1. `docker build -t client-app .`
+2. `docker run -p 80:80 client-app`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Структура кода
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Основные файлы
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `Dockerfile` - докерфайл для запуска приложения;
+- `src/App.js` и `src/index.js` - код с реализацией логики React приложения;
+- `nginx/nginx.conf` и `nginx/site.conf` - файлы с конфигурацией nginx.
