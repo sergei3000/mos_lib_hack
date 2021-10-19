@@ -101,7 +101,7 @@ def generate_recommendations_file(
         all_recs_df, is_recs=True, books_full=books_full, itemid2recid=iid2recid
     )
     all_recs_df = all_recs_df.sort_values(["user_id", "ranking"])
-    all_recs_df.to_csv("../../data/recommendations.csv", index=False)
+    return all_recs_df
 
 
 def generate_history_file(interactions: pd.DataFrame):
@@ -114,3 +114,35 @@ def generate_history_file(interactions: pd.DataFrame):
         history, is_recs=False, books_full=books_full, itemid2recid=iid2recid
     )
     history.to_csv("../../data/history.csv", index=False)
+
+
+def get_top_items(interactions: pd.DataFrame, N:int = 5) -> pd.DataFrame:
+    """Get the most popelar items from users and books interacions for 'cold' users.
+
+    Args:
+        interactions (pd.DataFrame): Users and their books.
+        N (int): number of items to take.
+
+    Returns:
+        pd.DataFrame: Table with user_id=0 and 5 the most popular items.
+    """
+    iid2recid = load_mapping("../../data/iid2recid")
+    books_full = pd.read_parquet("../../data/books_full.parquet.gzip")
+
+    interactions["recId"] = interactions["item_id"].map(iid2recid)
+    interactions = interactions.merge(books_full[["recId", "title", "author", "rubric_name"]], on="recId")
+    interactions = interactions.query("dt > '2021-08-01'").copy()
+
+    pop_items = (
+        interactions
+        .groupby("recId", as_index=False)
+        .agg({"user_id": "count",  "title": "first", "author": "first", "rubric_name": "first"})
+        .sort_values("user_id", ascending=False)
+    )
+    pop_items = pop_items.fillna("unknown")
+    top = pop_items[pop_items["rubric_name"].str.contains("Худ")].head(5)[["recId", "title", "author"]]
+    top = top.rename(columns={"recId": "item_id"})
+    top["ranking"] = list(range(1,6))
+    top["user_id"] = 0
+    top = top[["user_id", "item_id", "title", "author", "ranking"]]
+    return top
