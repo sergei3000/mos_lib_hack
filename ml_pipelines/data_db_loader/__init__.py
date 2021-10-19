@@ -31,9 +31,8 @@ HISTORY_COLUMN_DEFINITIONS = [
 ]
 CSV_FILE_DELIMITER = ","
 # How many rows to push through connection at once
-RECOMMENDATIONS_DATA = "../../data/recommendations.csv"
-HISTORY_DATA = "../../data/history.csv"
 BATCH_SIZE = 50000
+
 
 def send_to_database(datafilename: str,
     dbname: str,
@@ -55,12 +54,16 @@ def send_to_database(datafilename: str,
 
 
 def main():
-    send_to_database(RECOMMENDATIONS_DATA,
+    data_dir = "../../data/" if __name__ == "__main__" else "data/"
+    recommendations_data = f"{data_dir}recommendations.csv"
+    history_data = f"{data_dir}history.csv"
+    
+    send_to_database(recommendations_data,
         DB_NAME,
         RECOMMENDATIONS_TABLE,
         RECOMMENDATIONS_COLUMN_DEFINITIONS)
     
-    send_to_database(HISTORY_DATA,
+    send_to_database(history_data,
         DB_NAME,
         HISTORY_TABLE,
         HISTORY_COLUMN_DEFINITIONS)
