@@ -8,6 +8,7 @@ router = fastapi.APIRouter()
 
 @router.get("/get_recommendations/{user_id}")
 async def get_test_item(user_id: int, req: Request):
+    """Запрос рекомендаций по user_id"""
     recommendations = await recommendation_services.get_recommendations(user_id, req.app.state.pool)
     history = await recommendation_services.get_history(user_id, req.app.state.pool)
 
