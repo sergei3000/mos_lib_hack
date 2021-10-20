@@ -109,10 +109,11 @@ def generate_history_file(interactions: pd.DataFrame):
     books_full = pd.read_parquet("../../data/books_full.parquet.gzip", columns=["recId", "title", "author"])
     history = interactions.copy()
     history = history.sort_values(["user_id", "dt"], ascending=[True, False])
-    history = history[history.groupby("user_id").cumcount() < 20]
     history = prepare_for_saving(
         history, is_recs=False, books_full=books_full, itemid2recid=iid2recid
     )
+    history = history.drop_duplicates(subset=["user_id", "item_id"], ignore_index=True, keep="last")
+    history = history[history.groupby("user_id").cumcount() < 20]
     history.to_csv("../../data/history.csv", index=False)
 
 
