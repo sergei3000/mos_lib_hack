@@ -4,7 +4,7 @@ from utils import load_mapping, save_mapping
 
 
 def prepare_mappings_for_recid():
-    books_full = pd.read_parquet("../data/books_full.parquet.gzip")
+    books_full = pd.read_parquet("../../data/books_full.parquet.gzip")
     books_full["item_id"] = (
         (books_full["author"].str.lower() + " " + books_full["title"].str.lower())
         .astype("category")
@@ -14,8 +14,8 @@ def prepare_mappings_for_recid():
     recid2iid = dict(zip(books_full["recId"], books_full["item_id"]))
     iid2recid = dict(zip(books_full["item_id"], books_full["recId"]))
 
-    save_mapping(recid2iid, "data/recid2iid")
-    save_mapping(iid2recid, "data/iid2recid")
+    save_mapping(recid2iid, "../../data/recid2iid")
+    save_mapping(iid2recid, "../../data/iid2recid")
 
 
 def prepare_circulatons_file():
