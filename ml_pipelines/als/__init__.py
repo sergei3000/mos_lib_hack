@@ -20,12 +20,16 @@ CIRCULATONS_FILE = "../../data/circulatons.parquet.gzip"
 DATASET_KNIGI_FILE = "../../data/dataset_knigi.csv"
 
 
-def main():
+def prepare_all_data():
     prepare_cat_file()
     prepare_books_full_file()
     prepare_mappings_for_recid()
     prepare_circulatons_file()
     prepare_dataset_knigi_file()
+
+
+def main():
+    prepare_all_data()
 
     interactions = read_data(
         circulatons_filename=CIRCULATONS_FILE, dataset_knigi_filename=DATASET_KNIGI_FILE
