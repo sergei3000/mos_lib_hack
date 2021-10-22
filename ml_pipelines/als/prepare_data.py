@@ -23,7 +23,7 @@ def prepare_cat_file():
 def prepare_books_full_file():
     parsed_books_full = []
     invalid_rows = []
-    with open('books_full.jsn.tag') as f:
+    with open('../../data/raw/books_full.jsn.tag') as f:
         for i, line in enumerate(f):
             try:
                 data = json.loads(line[:-2])
