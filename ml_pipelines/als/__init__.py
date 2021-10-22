@@ -1,5 +1,7 @@
 import pandas as pd
 from prepare_data import (
+    prepare_cat_file,
+    prepare_books_full_file,
     prepare_mappings_for_recid,
     prepare_circulatons_file,
     prepare_dataset_knigi_file,
