@@ -133,3 +133,6 @@ data/*
 
 # different temporary files
 tmp.py
+
+# IDE files
+.vscode/
